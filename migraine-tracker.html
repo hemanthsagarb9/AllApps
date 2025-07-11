@@ -1,0 +1,2125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migraine Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: #f5f5f7;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            line-height: 1.47;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1024px;
+            margin: 0 auto;
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #ffffff;
+            padding: 44px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.125rem;
+            margin-bottom: 8px;
+            color: #1d1d1f;
+            font-weight: 700;
+            letter-spacing: -0.022em;
+            line-height: 1.19;
+        }
+
+        .header p {
+            color: #86868b;
+            font-size: 1.0625rem;
+            font-weight: 400;
+            line-height: 1.38;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #fbfbfd;
+            border-bottom: 1px solid #d2d2d7;
+            justify-content: center;
+        }
+
+        .nav-tab {
+            padding: 17px 24px;
+            text-align: center;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 0.9375rem;
+            font-weight: 400;
+            color: #1d1d1f;
+            transition: all 0.3s ease;
+            letter-spacing: -0.022em;
+            line-height: 1.33;
+        }
+
+        .nav-tab:hover {
+            background: #f5f5f7;
+        }
+
+        .nav-tab.active {
+            background: #ffffff;
+            border-bottom: 2px solid #0071e3;
+            color: #0071e3;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 40px 20px;
+            background: #f5f5f7;
+            min-height: 70vh;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Daily Log Styles */
+        .log-section {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e8e8ed;
+        }
+
+        .log-section h3 {
+            color: #1d1d1f;
+            margin-bottom: 8px;
+            font-size: 1.3125rem;
+            font-weight: 600;
+            letter-spacing: -0.022em;
+            line-height: 1.19;
+        }
+
+        .section-description {
+            color: #86868b;
+            font-size: 0.9375rem;
+            margin-bottom: 24px;
+            line-height: 1.38;
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #1d1d1f;
+            font-size: 0.9375rem;
+            letter-spacing: -0.022em;
+            line-height: 1.33;
+        }
+
+        .toggle-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            padding: 12px 24px;
+            border: 1px solid #d2d2d7;
+            border-radius: 980px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 400;
+            color: #1d1d1f;
+            font-size: 0.9375rem;
+            letter-spacing: -0.022em;
+        }
+
+        .toggle-btn:hover {
+            border-color: #86868b;
+            background: #f5f5f7;
+        }
+
+        .toggle-btn.active {
+            background: #0071e3;
+            color: #ffffff;
+            border-color: #0071e3;
+        }
+
+        .trigger-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .trigger-btn {
+            padding: 12px 16px;
+            border: 1px solid #d2d2d7;
+            border-radius: 12px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 400;
+            color: #1d1d1f;
+            font-size: 0.875rem;
+            letter-spacing: -0.022em;
+            text-align: center;
+        }
+
+        .trigger-btn:hover {
+            border-color: #86868b;
+            background: #f5f5f7;
+        }
+
+        .trigger-btn.active {
+            background: #0071e3;
+            color: #ffffff;
+            border-color: #0071e3;
+        }
+
+        .sleep-duration-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .sleep-btn {
+            padding: 12px 8px;
+            border: 1px solid #d2d2d7;
+            border-radius: 8px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 400;
+            color: #1d1d1f;
+            font-size: 0.875rem;
+            letter-spacing: -0.022em;
+            text-align: center;
+        }
+
+        .sleep-btn:hover {
+            border-color: #86868b;
+            background: #f5f5f7;
+        }
+
+        .sleep-btn.active {
+            background: #0071e3;
+            color: #ffffff;
+            border-color: #0071e3;
+        }
+
+        .slider-container {
+            margin: 24px 0;
+        }
+
+        .slider {
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: #e8e8ed;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #0071e3;
+            cursor: pointer;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #0071e3;
+            cursor: pointer;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .slider-value {
+            text-align: center;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-top: 16px;
+            letter-spacing: -0.022em;
+            line-height: 1.33;
+        }
+
+        input[type="time"], input[type="date"], textarea {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid #d2d2d7;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #ffffff;
+            font-family: inherit;
+            color: #1d1d1f;
+        }
+
+        input[type="time"]:focus, input[type="date"]:focus, textarea:focus {
+            outline: none;
+            border-color: #0071e3;
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.47;
+        }
+
+        .save-btn {
+            background: #0071e3;
+            color: #ffffff;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 980px;
+            font-size: 1rem;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-family: inherit;
+            letter-spacing: -0.022em;
+        }
+
+        .save-btn:hover {
+            background: #0077ed;
+            transform: translateY(-1px);
+        }
+
+        /* Calendar Styles */
+        .calendar-container {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e8e8ed;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .calendar-header h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            letter-spacing: -0.022em;
+            line-height: 1.33;
+        }
+
+        .calendar-nav {
+            background: #0071e3;
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 980px;
+            cursor: pointer;
+            font-size: 0.9375rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            letter-spacing: -0.022em;
+        }
+
+        .calendar-nav:hover {
+            background: #0077ed;
+            transform: translateY(-1px);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-bottom: 24px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .calendar-day.other-month {
+            color: #d1d5db;
+        }
+
+        .calendar-day.good {
+            background: #f8fafc;
+            color: #475569;
+            border-color: #e2e8f0;
+        }
+
+        .calendar-day.mild {
+            background: #fef7ed;
+            color: #ea580c;
+            border-color: #fed7aa;
+        }
+
+        .calendar-day.bad {
+            background: #fef2f2;
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        .calendar-day.today {
+            border: 2px solid #0071e3;
+            font-weight: 600;
+        }
+
+        .calendar-day.hair-wash::after {
+            content: '•';
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            font-size: 1.2rem;
+            color: #0071e3;
+        }
+
+        .calendar-day:hover {
+            transform: scale(1.05);
+        }
+
+        .weekday-header {
+            text-align: center;
+            font-weight: 600;
+            color: #86868b;
+            padding: 12px 0;
+            font-size: 0.8125rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Stats Styles */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            padding: 32px 24px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e8e8ed;
+        }
+
+        .stat-number {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+            letter-spacing: -0.022em;
+            line-height: 1.19;
+        }
+
+        .stat-label {
+            color: #86868b;
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: -0.022em;
+            line-height: 1.38;
+        }
+
+        .trigger-analysis {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 18px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e8e8ed;
+        }
+
+        .trigger-analysis h3 {
+            color: #1d1d1f;
+            margin-bottom: 24px;
+            font-size: 1.3125rem;
+            font-weight: 600;
+            letter-spacing: -0.022em;
+            line-height: 1.19;
+        }
+
+        .trigger-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .trigger-stat-item {
+            padding: 20px;
+            background: #f5f5f7;
+            border-radius: 12px;
+            border: 1px solid #e8e8ed;
+        }
+
+        .trigger-stat-name {
+            font-size: 0.9375rem;
+            font-weight: 500;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+            letter-spacing: -0.022em;
+        }
+
+        .trigger-stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0071e3;
+            letter-spacing: -0.022em;
+        }
+        
+        .data-export {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 18px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e8e8ed;
+            margin-top: 20px;
+        }
+        
+        .data-export h3 {
+            color: #1d1d1f;
+            margin-bottom: 8px;
+            font-size: 1.3125rem;
+            font-weight: 600;
+            letter-spacing: -0.022em;
+            line-height: 1.19;
+        }
+        
+        .download-btn {
+            background: #0071e3;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 980px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 12px;
+            margin-top: 16px;
+            letter-spacing: -0.022em;
+        }
+        
+        .download-btn:hover {
+            background: #0077ed;
+            transform: translateY(-1px);
+        }
+
+        /* Info Section Styles */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 20px;
+        }
+
+        .info-card {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 18px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e8e8ed;
+        }
+
+        .info-card h3 {
+            color: #1d1d1f;
+            margin-bottom: 24px;
+            font-size: 1.3125rem;
+            font-weight: 600;
+            letter-spacing: -0.022em;
+            line-height: 1.19;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-card li {
+            padding: 16px 0;
+            border-bottom: 1px solid #e8e8ed;
+            color: #1d1d1f;
+            line-height: 1.47;
+        }
+
+        .info-card li:last-child {
+            border-bottom: none;
+        }
+
+        .info-card .highlight {
+            background: #f5f5f7;
+            padding: 24px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 1px solid #d2d2d7;
+        }
+
+        .routine-step {
+            background: #fbfbfd;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border: 1px solid #e8e8ed;
+        }
+
+        .routine-step strong {
+            color: #1d1d1f;
+        }
+
+        .trigger-detail {
+            display: inline-block;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        .trigger-detail-input {
+            padding: 8px 10px;
+            border: 1px solid #d2d2d7;
+            border-radius: 8px;
+            background: #fff;
+            font-size: 0.95rem;
+            margin-right: 4px;
+            margin-bottom: 4px;
+            min-width: 60px;
+        }
+        
+        .trigger-details-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .trigger-detail-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+        }
+        
+        .trigger-detail-field {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .trigger-detail-field .trigger-detail-input {
+            margin: 0;
+        }
+        
+        .meal-buttons, .light-source-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .meal-btn, .light-source-btn {
+            padding: 6px 12px;
+            border: 1px solid #d2d2d7;
+            border-radius: 6px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 400;
+            color: #1d1d1f;
+            font-size: 0.875rem;
+            letter-spacing: -0.022em;
+        }
+        
+        .meal-btn:hover, .light-source-btn:hover {
+            border-color: #86868b;
+            background: #f5f5f7;
+        }
+        
+        .meal-btn.active, .light-source-btn.active {
+            background: #0071e3;
+            color: #ffffff;
+            border-color: #0071e3;
+        }
+        
+        .caffeine-buttons, .screen-buttons, .alcohol-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .caffeine-btn, .screen-btn, .alcohol-btn {
+            padding: 6px 12px;
+            border: 1px solid #d2d2d7;
+            border-radius: 6px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 400;
+            color: #1d1d1f;
+            font-size: 0.875rem;
+            letter-spacing: -0.022em;
+        }
+        
+        .caffeine-btn:hover, .screen-btn:hover, .alcohol-btn:hover {
+            border-color: #86868b;
+            background: #f5f5f7;
+        }
+        
+        .caffeine-btn.active, .screen-btn.active, .alcohol-btn.active {
+            background: #0071e3;
+            color: #ffffff;
+            border-color: #0071e3;
+        }
+
+        .section-header {
+            grid-column: 1 / -1;
+            background: #fbfbfd;
+            padding: 32px 40px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            border: 1px solid #e8e8ed;
+            text-align: center;
+        }
+
+        .section-header h2 {
+            color: #1d1d1f;
+            margin-bottom: 8px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.022em;
+            line-height: 1.19;
+        }
+
+        .section-header p {
+            color: #86868b;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.38;
+            margin: 0;
+        }
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+            }
+            
+            .tab-content {
+                padding: 20px;
+            }
+            
+            .log-section, .calendar-container, .info-card {
+                padding: 24px;
+            }
+            
+            .calendar-grid {
+                gap: 2px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .toggle-group {
+                flex-direction: column;
+            }
+            
+            .trigger-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 8px;
+            }
+            
+            .sleep-duration-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
+            
+            .trigger-analysis {
+                padding: 24px;
+            }
+            
+            .trigger-stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 12px;
+            }
+            .trigger-detail {
+                display: block;
+                margin-left: 0;
+                margin-top: 4px;
+            }
+            
+            .trigger-detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .trigger-detail-field {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
+            .meal-buttons, .light-source-buttons {
+                flex-direction: column;
+                gap: 6px;
+            }
+            
+            .meal-btn, .light-source-btn {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .caffeine-buttons, .screen-buttons, .alcohol-buttons {
+                flex-direction: column;
+                gap: 6px;
+            }
+            
+            .caffeine-btn, .screen-btn, .alcohol-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Migraine Tracker</h1>
+            <p>Your personal migraine & hair care companion</p>
+        </header>
+
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('daily')">Daily Log</button>
+            <button class="nav-tab" onclick="showTab('calendar')">Calendar</button>
+            <button class="nav-tab" onclick="showTab('stats')">Stats</button>
+            <button class="nav-tab" onclick="showTab('info')">Info</button>
+        </nav>
+
+        <!-- Daily Log Tab -->
+        <div id="daily" class="tab-content active">
+            <div class="log-section">
+                <h3>Today's Log</h3>
+                <form id="dailyForm">
+                    <div class="form-group">
+                        <label>Date:</label>
+                        <input type="date" id="logDate" required>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Potential Triggers Section -->
+            <div class="log-section">
+                <h3>Potential Triggers</h3>
+                <p class="section-description">Track what happened today that might trigger a migraine</p>
+                
+                <div class="form-group">
+                    <label>Hair Care:</label>
+                    <div class="toggle-group">
+                        <button type="button" class="toggle-btn" data-value="no" onclick="toggleHairWash('no')">No Wash</button>
+                        <button type="button" class="toggle-btn" data-value="yes" onclick="toggleHairWash('yes')">Washed Hair</button>
+                    </div>
+                    <div id="hairWashDetails" style="display: none;">
+                        <label style="margin-top: 16px;">When:</label>
+                        <div class="toggle-group">
+                            <button type="button" class="toggle-btn" data-wash-time="morning" onclick="toggleWashTime('morning')">Morning</button>
+                            <button type="button" class="toggle-btn" data-wash-time="night" onclick="toggleWashTime('night')">Night</button>
+                        </div>
+                        <label>Products Used:</label>
+                        <div class="trigger-grid" style="margin-bottom: 16px;">
+                            <button type="button" class="trigger-btn" data-product="dry_shampoo" onclick="toggleProduct('dry_shampoo')">Dry Shampoo</button>
+                            <button type="button" class="trigger-btn" data-product="wipes" onclick="toggleProduct('wipes')">Wipes</button>
+                            <button type="button" class="trigger-btn" data-product="oil" onclick="toggleProduct('oil')">Oil</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Environmental Exposure:</label>
+                    <div class="toggle-group">
+                        <button type="button" class="toggle-btn" data-exposure="cold" onclick="toggleExposure('cold')">Cold Air</button>
+                        <button type="button" class="toggle-btn" data-exposure="heat" onclick="toggleExposure('heat')">Heat/Sun</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Sleep Quality:</label>
+                    <div class="toggle-group">
+                        <button type="button" class="toggle-btn" data-trigger="sleep" data-value="poor" onclick="toggleTrigger('sleep', 'poor')">Poor</button>
+                        <button type="button" class="toggle-btn" data-trigger="sleep" data-value="fair" onclick="toggleTrigger('sleep', 'fair')">Fair</button>
+                        <button type="button" class="toggle-btn" data-trigger="sleep" data-value="good" onclick="toggleTrigger('sleep', 'good')">Good</button>
+                    </div>
+                    <label style="margin-top: 16px;">Hours of Sleep:</label>
+                    <div class="sleep-duration-grid">
+                        <button type="button" class="sleep-btn" data-sleep-hours="4" onclick="toggleSleepDuration('4')">4h</button>
+                        <button type="button" class="sleep-btn" data-sleep-hours="5" onclick="toggleSleepDuration('5')">5h</button>
+                        <button type="button" class="sleep-btn" data-sleep-hours="6" onclick="toggleSleepDuration('6')">6h</button>
+                        <button type="button" class="sleep-btn" data-sleep-hours="7" onclick="toggleSleepDuration('7')">7h</button>
+                        <button type="button" class="sleep-btn" data-sleep-hours="8" onclick="toggleSleepDuration('8')">8h</button>
+                        <button type="button" class="sleep-btn" data-sleep-hours="9" onclick="toggleSleepDuration('9')">9h</button>
+                        <button type="button" class="sleep-btn" data-sleep-hours="10" onclick="toggleSleepDuration('10')">10h</button>
+                        <button type="button" class="sleep-btn" data-sleep-hours="other" onclick="toggleSleepDuration('other')">Other</button>
+                    </div>
+                    <input type="number" id="sleepDurationCustom" min="0" max="15" step="0.5" placeholder="e.g. 7.5" style="display: none; margin-top: 12px;">
+                </div>
+
+                <div class="form-group">
+                    <label>Stress Level:</label>
+                    <div class="toggle-group">
+                        <button type="button" class="toggle-btn" data-trigger="stress" data-value="low" onclick="toggleTrigger('stress', 'low')">Low</button>
+                        <button type="button" class="toggle-btn" data-trigger="stress" data-value="medium" onclick="toggleTrigger('stress', 'medium')">Medium</button>
+                        <button type="button" class="toggle-btn" data-trigger="stress" data-value="high" onclick="toggleTrigger('stress', 'high')">High</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Simple Triggers:</label>
+                    <div class="trigger-grid">
+                        <button type="button" class="trigger-btn" data-trigger="weather" onclick="toggleMultiTrigger('weather')">Weather Change</button>
+                        <button type="button" class="trigger-btn" data-trigger="dehydration" onclick="toggleMultiTrigger('dehydration')">Dehydration</button>
+                        <button type="button" class="trigger-btn" data-trigger="hormonal" onclick="toggleMultiTrigger('hormonal')">Hormonal</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Triggers with Details:</label>
+                    <div class="trigger-details-container">
+                        <div class="trigger-detail-row">
+                            <button type="button" class="trigger-btn" data-trigger="caffeine" onclick="toggleMultiTrigger('caffeine')">Caffeine</button>
+                            <div id="caffeineDetail" class="trigger-detail-field">
+                                <div class="caffeine-buttons">
+                                    <button type="button" class="caffeine-btn" data-cups="2" onclick="selectCaffeine(2)">2 cups</button>
+                                    <button type="button" class="caffeine-btn" data-cups="3" onclick="selectCaffeine(3)">3 cups</button>
+                                    <button type="button" class="caffeine-btn" data-cups="4" onclick="selectCaffeine(4)">4 cups</button>
+                                    <button type="button" class="caffeine-btn" data-cups="more" onclick="selectCaffeine('more')">> 4 cups</button>
+                                </div>
+                                <input type="hidden" id="caffeineCups" value="">
+                            </div>
+                        </div>
+                        
+                        <div class="trigger-detail-row">
+                            <button type="button" class="trigger-btn" data-trigger="alcohol" onclick="toggleMultiTrigger('alcohol')">Alcohol</button>
+                            <div id="alcoholDetail" class="trigger-detail-field">
+                                <div class="alcohol-buttons">
+                                    <button type="button" class="alcohol-btn" data-drinks="1" onclick="selectAlcohol(1)">1 drink</button>
+                                    <button type="button" class="alcohol-btn" data-drinks="2" onclick="selectAlcohol(2)">2 drinks</button>
+                                    <button type="button" class="alcohol-btn" data-drinks="3" onclick="selectAlcohol(3)">3 drinks</button>
+                                    <button type="button" class="alcohol-btn" data-drinks="more" onclick="selectAlcohol('more')">> 3 drinks</button>
+                                </div>
+                                <input type="hidden" id="alcoholDrinks" value="">
+                            </div>
+                        </div>
+                        
+                        <div class="trigger-detail-row">
+                            <button type="button" class="trigger-btn" data-trigger="screen" onclick="toggleMultiTrigger('screen')">Screen Time</button>
+                            <div id="screenDetail" class="trigger-detail-field">
+                                <div class="screen-buttons">
+                                    <button type="button" class="screen-btn" data-hours="2" onclick="selectScreenTime(2)">≤ 2 hours</button>
+                                    <button type="button" class="screen-btn" data-hours="6" onclick="selectScreenTime(6)">3-6 hours</button>
+                                    <button type="button" class="screen-btn" data-hours="more" onclick="selectScreenTime('more')">> 6 hours</button>
+                                </div>
+                                <input type="hidden" id="screenHours" value="">
+                            </div>
+                        </div>
+                        
+                        <div class="trigger-detail-row">
+                            <button type="button" class="trigger-btn" data-trigger="skipped_meal" onclick="toggleMultiTrigger('skipped_meal')">Skipped Meal</button>
+                            <div id="skippedMealDetail" class="trigger-detail-field">
+                                <div class="meal-buttons">
+                                    <button type="button" class="meal-btn" data-meal="breakfast" onclick="selectMeal('breakfast')">Breakfast</button>
+                                    <button type="button" class="meal-btn" data-meal="lunch" onclick="selectMeal('lunch')">Lunch</button>
+                                    <button type="button" class="meal-btn" data-meal="dinner" onclick="selectMeal('dinner')">Dinner</button>
+                                </div>
+                                <input type="hidden" id="skippedMealType" value="">
+                            </div>
+                        </div>
+                        
+                        <div class="trigger-detail-row">
+                            <button type="button" class="trigger-btn" data-trigger="bright_lights" onclick="toggleMultiTrigger('bright_lights')">Bright Lights</button>
+                            <div id="brightLightsDetail" class="trigger-detail-field">
+                                <div class="light-source-buttons">
+                                    <button type="button" class="light-source-btn" data-source="sun" onclick="selectLightSource('sun')">Sun</button>
+                                    <button type="button" class="light-source-btn" data-source="led" onclick="selectLightSource('led')">LED</button>
+                                    <button type="button" class="light-source-btn" data-source="fluorescent" onclick="selectLightSource('fluorescent')">Fluorescent</button>
+                                    <button type="button" class="light-source-btn" data-source="other" onclick="selectLightSource('other')">Other</button>
+                                </div>
+                                <input type="hidden" id="brightLightsSource" value="">
+                            </div>
+                        </div>
+                        
+                        <div class="trigger-detail-row">
+                            <button type="button" class="trigger-btn" data-trigger="strong_smell" onclick="toggleMultiTrigger('strong_smell')">Strong Smell</button>
+                            <div id="strongSmellDetail" class="trigger-detail-field">
+                                <input type="text" id="strongSmellSource" placeholder="What was the smell? (e.g. perfume, paint)" class="trigger-detail-input">
+                            </div>
+                        </div>
+                        
+                        <div class="trigger-detail-row">
+                            <button type="button" class="trigger-btn" data-trigger="exercise" onclick="toggleMultiTrigger('exercise')">Exercise</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Migraine Symptoms Section -->
+            <div class="log-section">
+                <h3>Migraine Symptoms</h3>
+                <p class="section-description">Record any migraine symptoms you experienced</p>
+                
+                <div class="form-group">
+                    <label>Migraine Intensity (0 = No pain, 10 = Severe):</label>
+                    <div class="slider-container">
+                        <input type="range" id="migraineSeverity" class="slider" min="0" max="10" value="0" oninput="updateSliderValue(this.value)">
+                        <div class="slider-value" id="sliderValue">0 - No pain</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Specific Symptoms:</label>
+                    <div class="trigger-grid" style="margin-bottom: 16px;">
+                        <button type="button" class="trigger-btn" data-symptom="pain_behind_left_eye" onclick="toggleSymptom('pain_behind_left_eye')">Pain Behind Left Eye</button>
+                        <button type="button" class="trigger-btn" data-symptom="vomiting" onclick="toggleSymptom('vomiting')">Vomiting</button>
+                        <button type="button" class="trigger-btn" data-symptom="nausea" onclick="toggleSymptom('nausea')">Nausea</button>
+                        <button type="button" class="trigger-btn" data-symptom="light_sensitivity" onclick="toggleSymptom('light_sensitivity')">Light Sensitivity</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Section -->
+            <div class="log-section">
+                <h3>Additional Notes</h3>
+                <p class="section-description">Any other observations or comments</p>
+                
+                <div class="form-group">
+                    <textarea id="notes" placeholder="Any additional notes about your day, symptoms, triggers, patterns you noticed, etc."></textarea>
+                </div>
+
+                <button type="submit" class="save-btn" onclick="saveDailyLog()">Save Today's Log</button>
+            </div>
+        </div>
+
+        <!-- Calendar Tab -->
+        <div id="calendar" class="tab-content">
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <button class="calendar-nav" onclick="changeMonth(-1)">‹ Previous</button>
+                    <h3 id="currentMonth"></h3>
+                    <button class="calendar-nav" onclick="changeMonth(1)">Next ›</button>
+                </div>
+                
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- Calendar will be populated by JavaScript -->
+                </div>
+                
+                <div style="display: flex; justify-content: space-around; margin-top: 20px; font-size: 0.9rem; color: #6b7280;">
+                    <span>Good Day</span>
+                    <span>Mild Migraine</span>
+                    <span>Bad Migraine</span>
+                    <span>Hair Wash</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Tab -->
+        <div id="stats" class="tab-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalMigraines">0</div>
+                    <div class="stat-label">Migraine Days This Month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="hairWashDays">0</div>
+                    <div class="stat-label">Hair Wash Days</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="correlationPercent">0%</div>
+                    <div class="stat-label">Migraines After Hair Wash</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="avgIntensity">0</div>
+                    <div class="stat-label">Average Migraine Intensity</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="leftEyePainPercent">0%</div>
+                    <div class="stat-label">Pain Behind Left Eye</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="avgSleepDuration">0</div>
+                    <div class="stat-label">Average Sleep (hours)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="mostCommonDay">-</div>
+                    <div class="stat-label">Most Common Migraine Day</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="topTrigger">-</div>
+                    <div class="stat-label">Top Trigger This Month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="longestStreak">0</div>
+                    <div class="stat-label">Longest Migraine-Free Streak</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="caffeineImpact">-</div>
+                    <div class="stat-label">Caffeine Impact</div>
+                </div>
+            </div>
+            
+            <div class="trigger-analysis">
+                <h3>Trigger Analysis</h3>
+                <div class="trigger-stats-grid" id="triggerStats">
+                    <!-- Trigger stats will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="data-export">
+                <h3>Data Export</h3>
+                <p class="section-description">Download your migraine data for backup or sharing with healthcare providers</p>
+                <button type="button" class="download-btn" onclick="downloadData()">Download All Data (JSON)</button>
+                <button type="button" class="download-btn" onclick="downloadDataCSV()">Download as CSV</button>
+            </div>
+        </div>
+
+        <!-- Info Tab -->
+        <div id="info" class="tab-content">
+            <div class="info-grid">
+                <!-- Hair Wash Related Sections -->
+                <div class="section-header">
+                    <h2>Hair Wash Management</h2>
+                    <p>Strategies and products to manage hair wash as a migraine trigger</p>
+                </div>
+                
+                <div class="info-card">
+                    <h3>Medications</h3>
+                    <div class="highlight">
+                        <strong>Naproxen (Naprogesic 275mg)</strong><br>
+                        Take 1 hour before head wash<br>
+                        Dose: 250-500mg<br>
+                        Available OTC in Australia
+                    </div>
+                    <ul>
+                        <li><strong>When:</strong> Before hair wash, especially if going to work</li>
+                        <li><strong>Alternative:</strong> Take night before morning hair wash</li>
+                        <li><strong>Prescription option:</strong> Amitriptyline 5-10mg (if migraines become frequent)</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Hair Products</h3>
+                    <ul>
+                        <li><strong>Mild Shampoos:</strong> Sebamed Everyday, Himalaya Baby, Aveeno Sulfate-Free</li>
+                        <li><strong>Oils:</strong> Almond oil, Argan oil, Light coconut oil</li>
+                        <li><strong>Dry Shampoo:</strong> Batiste Bare, Colab Original</li>
+                        <li><strong>Hair Dryer:</strong> Philips ThermoProtect (cool mode)</li>
+                        <li><strong>Towel:</strong> Microfiber wrap towel</li>
+                        <li><strong>Comb:</strong> Wide-tooth, anti-static or wooden</li>
+                        <li><strong>Scalp Tool:</strong> Soft silicone scalp brush</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Shopping List</h3>
+                    <ul>
+                        <li>Naproxen 275mg (pharmacy)</li>
+                        <li>Sebamed Everyday Shampoo</li>
+                        <li>Batiste Dry Shampoo</li>
+                        <li>Almond oil</li>
+                        <li>Microfiber hair towel</li>
+                        <li>Wide-tooth comb</li>
+                        <li>Scalp massage brush</li>
+                        <li>Baby wipes (scalp cleaning)</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Night Routine</h3>
+                    <div class="routine-step">
+                        <strong>Step 1:</strong> Light oil massage (2-3x/week) → 30-60 min before wash
+                    </div>
+                    <div class="routine-step">
+                        <strong>Step 2:</strong> Head wash with mild shampoo (night only, not morning)
+                    </div>
+                    <div class="routine-step">
+                        <strong>Step 3:</strong> Towel dry + cool air dry → No wet hair at bedtime
+                    </div>
+                    <div class="routine-step">
+                        <strong>Step 4:</strong> Scalp massage (1-2 min) if not washing
+                    </div>
+                    <div class="routine-step">
+                        <strong>Step 5:</strong> Sleep 7-8 hours
+                    </div>
+                    <div class="highlight">
+                        <strong>Key Rule:</strong> Never go to bed with wet hair or step outside with wet hair into cold (<10°C) or harsh sun
+                    </div>
+                </div>
+
+                <!-- General Trigger Management Section -->
+                <div class="section-header">
+                    <h2>General Trigger Management</h2>
+                    <p>Strategies for managing all other migraine triggers</p>
+                </div>
+                
+                <div class="info-card">
+                    <h3>Trigger Management</h3>
+                    <ul>
+                        <li><strong>Sleep:</strong> Aim for 7-8 hours consistent sleep</li>
+                        <li><strong>Stress:</strong> Practice relaxation techniques daily</li>
+                        <li><strong>Weather:</strong> Check forecasts, stay hydrated during changes</li>
+                        <li><strong>Hydration:</strong> Drink water regularly, especially before meals</li>
+                        <li><strong>Meals:</strong> Don't skip meals, eat regular small portions</li>
+                        <li><strong>Screen Time:</strong> Take breaks every 20 minutes</li>
+                        <li><strong>Caffeine:</strong> Limit to morning hours, avoid afternoon</li>
+                        <li><strong>Alcohol:</strong> Track which types trigger migraines</li>
+                        <li><strong>Exercise:</strong> Gentle exercise can help, avoid overexertion</li>
+                        <li><strong>Lights/Smells:</strong> Wear sunglasses, avoid strong perfumes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentDate = new Date();
+        let migraineLogs = JSON.parse(localStorage.getItem('migraineLogs')) || {};
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('logDate').value = new Date().toISOString().split('T')[0];
+            renderCalendar();
+            updateStats();
+        });
+
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all nav tabs
+            const navTabs = document.querySelectorAll('.nav-tab');
+            navTabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Update calendar and stats when switching tabs
+            if (tabName === 'calendar') {
+                renderCalendar();
+            } else if (tabName === 'stats') {
+                updateStats();
+            }
+        }
+
+        // Hair wash toggle
+        function toggleHairWash(value) {
+            const buttons = document.querySelectorAll('.toggle-btn[data-value]:not([data-trigger]):not([data-wash-time]):not([data-exposure])');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            const selectedBtn = document.querySelector(`[data-value="${value}"]:not([data-trigger]):not([data-wash-time]):not([data-exposure])`);
+            selectedBtn.classList.add('active');
+            
+            const hairWashDetails = document.getElementById('hairWashDetails');
+            if (value === 'yes') {
+                hairWashDetails.style.display = 'block';
+            } else {
+                hairWashDetails.style.display = 'none';
+                // Reset hair wash details
+                document.querySelectorAll('[data-wash-time], [data-product]').forEach(btn => btn.classList.remove('active'));
+            }
+        }
+
+        // Hair wash time toggle
+        function toggleWashTime(time) {
+            const buttons = document.querySelectorAll('[data-wash-time]');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            const selectedBtn = document.querySelector(`[data-wash-time="${time}"]`);
+            selectedBtn.classList.add('active');
+        }
+
+        // Product toggle
+        function toggleProduct(product) {
+            const btn = document.querySelector(`[data-product="${product}"]`);
+            btn.classList.toggle('active');
+        }
+
+        // Environmental exposure toggle
+        function toggleExposure(exposure) {
+            const btn = document.querySelector(`[data-exposure="${exposure}"]`);
+            btn.classList.toggle('active');
+        }
+
+        // Symptom toggle
+        function toggleSymptom(symptom) {
+            const btn = document.querySelector(`[data-symptom="${symptom}"]`);
+            btn.classList.toggle('active');
+        }
+
+        // Sleep duration toggle
+        function toggleSleepDuration(hours) {
+            const buttons = document.querySelectorAll('.sleep-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            const selectedBtn = document.querySelector(`[data-sleep-hours="${hours}"]`);
+            selectedBtn.classList.add('active');
+            
+            const customInput = document.getElementById('sleepDurationCustom');
+            if (hours === 'other') {
+                customInput.style.display = 'block';
+                customInput.focus();
+            } else {
+                customInput.style.display = 'none';
+                customInput.value = '';
+            }
+        }
+
+        // Single trigger toggle (for sleep, stress)
+        function toggleTrigger(triggerType, value) {
+            const buttons = document.querySelectorAll(`[data-trigger="${triggerType}"]`);
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            const selectedBtn = document.querySelector(`[data-trigger="${triggerType}"][data-value="${value}"]`);
+            selectedBtn.classList.add('active');
+        }
+
+        // Multi-trigger toggle (for common triggers)
+        function toggleMultiTrigger(triggerType) {
+            const btn = document.querySelector(`[data-trigger="${triggerType}"]`);
+            btn.classList.toggle('active');
+            
+            // Show/hide detail fields for triggers that have them
+            const triggersWithDetails = ['caffeine', 'alcohol', 'screen', 'skipped_meal', 'bright_lights', 'strong_smell', 'exercise'];
+            if (triggersWithDetails.includes(triggerType)) {
+                toggleTriggerDetail(triggerType);
+            }
+        }
+
+        // Migraine severity slider
+        function updateSliderValue(value) {
+            const labels = [
+                'No pain', 'Very mild', 'Mild', 'Moderate', 'Moderate+', 
+                'Strong', 'Strong+', 'Very strong', 'Severe', 'Very severe', 'Extreme'
+            ];
+            document.getElementById('sliderValue').textContent = `${value} - ${labels[value]}`;
+        }
+
+        // Save daily log function
+        function saveDailyLog() {
+            const logDate = document.getElementById('logDate').value;
+            
+            if (!logDate) {
+                alert('Please select a date');
+                return;
+            }
+            
+            // Get hair wash info
+            const hairWashButtons = document.querySelectorAll('.toggle-btn[data-value]:not([data-trigger]):not([data-wash-time]):not([data-exposure])');
+            let hairWash = 'no';
+            
+            hairWashButtons.forEach(btn => {
+                if (btn.classList.contains('active')) {
+                    hairWash = btn.dataset.value;
+                }
+            });
+            
+            // Get hair wash time
+            let washTime = null;
+            const washTimeButtons = document.querySelectorAll('[data-wash-time]');
+            washTimeButtons.forEach(btn => {
+                if (btn.classList.contains('active')) {
+                    washTime = btn.dataset.washTime;
+                }
+            });
+            
+            // Get products used
+            const productsUsed = [];
+            const productButtons = document.querySelectorAll('[data-product].active');
+            productButtons.forEach(btn => {
+                productsUsed.push(btn.dataset.product);
+            });
+            
+            // Get environmental exposure
+            const environmentalExposure = [];
+            const exposureButtons = document.querySelectorAll('[data-exposure].active');
+            exposureButtons.forEach(btn => {
+                environmentalExposure.push(btn.dataset.exposure);
+            });
+            
+            // Get symptoms
+            const symptoms = [];
+            const symptomButtons = document.querySelectorAll('[data-symptom].active');
+            symptomButtons.forEach(btn => {
+                symptoms.push(btn.dataset.symptom);
+            });
+            
+            const migraineSeverity = parseInt(document.getElementById('migraineSeverity').value);
+            
+            // Get sleep duration
+            let sleepDuration = null;
+            const sleepDurationButtons = document.querySelectorAll('.sleep-btn');
+            sleepDurationButtons.forEach(btn => {
+                if (btn.classList.contains('active')) {
+                    if (btn.dataset.sleepHours === 'other') {
+                        sleepDuration = parseFloat(document.getElementById('sleepDurationCustom').value) || null;
+                    } else {
+                        sleepDuration = parseFloat(btn.dataset.sleepHours);
+                    }
+                }
+            });
+            
+            const notes = document.getElementById('notes').value;
+            
+            // Get sleep quality
+            let sleepQuality = null;
+            const sleepButtons = document.querySelectorAll('[data-trigger="sleep"]');
+            sleepButtons.forEach(btn => {
+                if (btn.classList.contains('active')) {
+                    sleepQuality = btn.dataset.value;
+                }
+            });
+            
+            // Get stress level
+            let stressLevel = null;
+            const stressButtons = document.querySelectorAll('[data-trigger="stress"]');
+            stressButtons.forEach(btn => {
+                if (btn.classList.contains('active')) {
+                    stressLevel = btn.dataset.value;
+                }
+            });
+            
+            // Get common triggers (exclude products, symptoms, and exposure which are tracked separately)
+            const commonTriggers = [];
+            const triggerButtons = document.querySelectorAll('.trigger-btn.active:not([data-product]):not([data-symptom])');
+            triggerButtons.forEach(btn => {
+                if (btn.dataset.trigger) {
+                    commonTriggers.push(btn.dataset.trigger);
+                }
+            });
+            
+            // Get details for specific triggers
+            const caffeineCups = document.getElementById('caffeineCups').value;
+            const alcoholDrinks = document.getElementById('alcoholDrinks').value;
+            const screenHours = document.getElementById('screenHours').value;
+            const skippedMealType = document.getElementById('skippedMealType').value;
+            const brightLightsSource = document.getElementById('brightLightsSource').value;
+            const strongSmellSource = document.getElementById('strongSmellSource').value;
+
+            // Save to localStorage
+            migraineLogs[logDate] = {
+                hairWash: hairWash,
+                washTime: washTime,
+                productsUsed: productsUsed,
+                environmentalExposure: environmentalExposure,
+                symptoms: symptoms,
+                migraineSeverity: migraineSeverity,
+                sleepDuration: sleepDuration,
+                sleepQuality: sleepQuality,
+                stressLevel: stressLevel,
+                commonTriggers: commonTriggers,
+                caffeineCups: caffeineCups,
+                alcoholDrinks: alcoholDrinks,
+                screenHours: screenHours,
+                skippedMealType: skippedMealType,
+                brightLightsSource: brightLightsSource,
+                strongSmellSource: strongSmellSource,
+                notes: notes
+            };
+            
+            localStorage.setItem('migraineLogs', JSON.stringify(migraineLogs));
+            
+            // Reset inputs
+            document.getElementById('logDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('migraineSeverity').value = 0;
+            document.getElementById('sliderValue').textContent = '0 - No pain';
+            document.getElementById('sleepDurationCustom').value = '';
+            document.getElementById('sleepDurationCustom').style.display = 'none';
+            document.getElementById('notes').value = '';
+            document.getElementById('hairWashDetails').style.display = 'none';
+            
+            // Reset all buttons
+            const allButtons = document.querySelectorAll('.toggle-btn, .trigger-btn, .sleep-btn, .meal-btn, .light-source-btn, .caffeine-btn, .screen-btn, .alcohol-btn');
+            allButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Clear hidden inputs
+            document.getElementById('caffeineCups').value = '';
+            document.getElementById('alcoholDrinks').value = '';
+            document.getElementById('screenHours').value = '';
+            document.getElementById('skippedMealType').value = '';
+            document.getElementById('brightLightsSource').value = '';
+            
+            alert('✅ Log saved successfully!');
+            
+            // Update displays
+            renderCalendar();
+            updateStats();
+        }
+
+        // Calendar functions
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const monthHeader = document.getElementById('currentMonth');
+            
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            monthHeader.textContent = new Date(year, month).toLocaleDateString('en-US', { 
+                month: 'long', 
+                year: 'numeric' 
+            });
+            
+            // Clear grid
+            grid.innerHTML = '';
+            
+            // Add weekday headers
+            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            weekdays.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'weekday-header';
+                dayHeader.textContent = day;
+                grid.appendChild(dayHeader);
+            });
+            
+            // Get first day of month and number of days
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+            
+            // Add empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day other-month';
+                grid.appendChild(emptyDay);
+            }
+            
+            // Add days of month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                // Check if it's today
+                if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
+                    dayElement.classList.add('today');
+                }
+                
+                // Check for logged data
+                if (migraineLogs[dateStr]) {
+                    const log = migraineLogs[dateStr];
+                    
+                    // Color based on migraine severity
+                    if (log.migraineSeverity === 0) {
+                        dayElement.classList.add('good');
+                    } else if (log.migraineSeverity <= 4) {
+                        dayElement.classList.add('mild');
+                    } else {
+                        dayElement.classList.add('bad');
+                    }
+                    
+                    // Add hair wash indicator
+                    if (log.hairWash === 'yes') {
+                        dayElement.classList.add('hair-wash');
+                    }
+                }
+                
+                grid.appendChild(dayElement);
+            }
+        }
+
+        function changeMonth(direction) {
+            currentDate.setMonth(currentDate.getMonth() + direction);
+            renderCalendar();
+        }
+
+        // Stats functions
+        function updateStats() {
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            
+            let totalMigraines = 0;
+            let hairWashDays = 0;
+            let migrainesAfterHairWash = 0;
+            let totalIntensity = 0;
+            let intensityCount = 0;
+            
+            // Trigger analysis and additional stats
+            const triggerCounts = {};
+            const triggerMigraneCounts = {};
+            let leftEyePainCount = 0;
+            let totalSleepDuration = 0;
+            let sleepDurationCount = 0;
+            
+            Object.keys(migraineLogs).forEach(dateStr => {
+                const logDate = new Date(dateStr);
+                if (logDate.getMonth() === currentMonth && logDate.getFullYear() === currentYear) {
+                    const log = migraineLogs[dateStr];
+                    const hasMigraine = log.migraineSeverity > 0;
+                    
+                    if (hasMigraine) {
+                        totalMigraines++;
+                        totalIntensity += log.migraineSeverity;
+                        intensityCount++;
+                        
+                        // Check for pain behind left eye
+                        if (log.symptoms && log.symptoms.includes('pain_behind_left_eye')) {
+                            leftEyePainCount++;
+                        }
+                    }
+                    
+                    // Track sleep duration
+                    if (log.sleepDuration) {
+                        totalSleepDuration += log.sleepDuration;
+                        sleepDurationCount++;
+                    }
+                    
+                    if (log.hairWash === 'yes') {
+                        hairWashDays++;
+                        
+                        // Check if migraine occurred same day or day after
+                        const nextDay = new Date(logDate);
+                        nextDay.setDate(nextDay.getDate() + 1);
+                        const nextDayStr = nextDay.toISOString().split('T')[0];
+                        
+                        if (log.migraineSeverity > 0 || (migraineLogs[nextDayStr] && migraineLogs[nextDayStr].migraineSeverity > 0)) {
+                            migrainesAfterHairWash++;
+                        }
+                    }
+                    
+                    // Analyze triggers
+                    if (log.sleepQuality) {
+                        const triggerKey = `Sleep: ${log.sleepQuality}`;
+                        triggerCounts[triggerKey] = (triggerCounts[triggerKey] || 0) + 1;
+                        if (hasMigraine) {
+                            triggerMigraneCounts[triggerKey] = (triggerMigraneCounts[triggerKey] || 0) + 1;
+                        }
+                    }
+                    
+                    if (log.sleepDuration) {
+                        let sleepCategory;
+                        if (log.sleepDuration < 6) sleepCategory = "Short Sleep (<6h)";
+                        else if (log.sleepDuration > 9) sleepCategory = "Long Sleep (>9h)";
+                        else sleepCategory = "Normal Sleep (6-9h)";
+                        
+                        triggerCounts[sleepCategory] = (triggerCounts[sleepCategory] || 0) + 1;
+                        if (hasMigraine) {
+                            triggerMigraneCounts[sleepCategory] = (triggerMigraneCounts[sleepCategory] || 0) + 1;
+                        }
+                    }
+                    
+                    if (log.stressLevel) {
+                        const triggerKey = `Stress: ${log.stressLevel}`;
+                        triggerCounts[triggerKey] = (triggerCounts[triggerKey] || 0) + 1;
+                        if (hasMigraine) {
+                            triggerMigraneCounts[triggerKey] = (triggerMigraneCounts[triggerKey] || 0) + 1;
+                        }
+                    }
+                    
+                    if (log.washTime) {
+                        const triggerKey = `Hair Wash: ${log.washTime}`;
+                        triggerCounts[triggerKey] = (triggerCounts[triggerKey] || 0) + 1;
+                        if (hasMigraine) {
+                            triggerMigraneCounts[triggerKey] = (triggerMigraneCounts[triggerKey] || 0) + 1;
+                        }
+                    }
+                    
+                    if (log.environmentalExposure && log.environmentalExposure.length > 0) {
+                        log.environmentalExposure.forEach(exposure => {
+                            const triggerKey = exposure === 'cold' ? 'Cold Air Exposure' : 'Heat/Sun Exposure';
+                            triggerCounts[triggerKey] = (triggerCounts[triggerKey] || 0) + 1;
+                            if (hasMigraine) {
+                                triggerMigraneCounts[triggerKey] = (triggerMigraneCounts[triggerKey] || 0) + 1;
+                            }
+                        });
+                    }
+                    
+                    if (log.productsUsed && log.productsUsed.length > 0) {
+                        log.productsUsed.forEach(product => {
+                            const triggerKey = product.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                            triggerCounts[triggerKey] = (triggerCounts[triggerKey] || 0) + 1;
+                            if (hasMigraine) {
+                                triggerMigraneCounts[triggerKey] = (triggerMigraneCounts[triggerKey] || 0) + 1;
+                            }
+                        });
+                    }
+                    
+                    if (log.commonTriggers && log.commonTriggers.length > 0) {
+                        log.commonTriggers.forEach(trigger => {
+                            const triggerKey = trigger.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                            triggerCounts[triggerKey] = (triggerCounts[triggerKey] || 0) + 1;
+                            if (hasMigraine) {
+                                triggerMigraneCounts[triggerKey] = (triggerMigraneCounts[triggerKey] || 0) + 1;
+                            }
+                        });
+                    }
+
+                    // Add specific trigger details to counts
+                    if (log.caffeineCups) {
+                        const triggerKey = `Caffeine: ${log.caffeineCups} cups`;
+                        triggerCounts[triggerKey] = (triggerCounts[triggerKey] || 0) + 1;
+                        if (hasMigraine) {
+                            triggerMigraneCounts[triggerKey] = (triggerMigraneCounts[triggerKey] || 0) + 1;
+                        }
+                    }
+                    if (log.alcoholDrinks) {
+                        const triggerKey = `Alcohol: ${log.alcoholDrinks} drinks`;
+                        triggerCounts[triggerKey] = (triggerCounts[triggerKey] || 0) + 1;
+                        if (hasMigraine) {
+                            triggerMigraneCounts[triggerKey] = (triggerMigraneCounts[triggerKey] || 0) + 1;
+                        }
+                    }
+                    if (log.screenHours) {
+                        const triggerKey = `Screen Time: ${log.screenHours} hours`;
+                        triggerCounts[triggerKey] = (triggerCounts[triggerKey] || 0) + 1;
+                        if (hasMigraine) {
+                            triggerMigraneCounts[triggerKey] = (triggerMigraneCounts[triggerKey] || 0) + 1;
+                        }
+                    }
+                    if (log.skippedMealType) {
+                        const triggerKey = `Skipped Meal: ${log.skippedMealType}`;
+                        triggerCounts[triggerKey] = (triggerCounts[triggerKey] || 0) + 1;
+                        if (hasMigraine) {
+                            triggerMigraneCounts[triggerKey] = (triggerMigraneCounts[triggerKey] || 0) + 1;
+                        }
+                    }
+                    if (log.brightLightsMinutes) {
+                        const triggerKey = `Bright Lights: ${log.brightLightsMinutes} minutes`;
+                        triggerCounts[triggerKey] = (triggerCounts[triggerKey] || 0) + 1;
+                        if (hasMigraine) {
+                            triggerMigraneCounts[triggerKey] = (triggerMigraneCounts[triggerKey] || 0) + 1;
+                        }
+                    }
+                    if (log.brightLightsSource) {
+                        const triggerKey = `Bright Lights Source: ${log.brightLightsSource}`;
+                        triggerCounts[triggerKey] = (triggerCounts[triggerKey] || 0) + 1;
+                        if (hasMigraine) {
+                            triggerMigraneCounts[triggerKey] = (triggerMigraneCounts[triggerKey] || 0) + 1;
+                        }
+                    }
+                    if (log.strongSmellSource) {
+                        const triggerKey = `Strong Smell Source: ${log.strongSmellSource}`;
+                        triggerCounts[triggerKey] = (triggerCounts[triggerKey] || 0) + 1;
+                        if (hasMigraine) {
+                            triggerMigraneCounts[triggerKey] = (triggerMigraneCounts[triggerKey] || 0) + 1;
+                        }
+                    }
+                    if (log.exerciseMinutes) {
+                        const triggerKey = `Exercise: ${log.exerciseMinutes} minutes`;
+                        triggerCounts[triggerKey] = (triggerCounts[triggerKey] || 0) + 1;
+                        if (hasMigraine) {
+                            triggerMigraneCounts[triggerKey] = (triggerMigraneCounts[triggerKey] || 0) + 1;
+                        }
+                    }
+                }
+            });
+            
+            document.getElementById('totalMigraines').textContent = totalMigraines;
+            document.getElementById('hairWashDays').textContent = hairWashDays;
+            document.getElementById('correlationPercent').textContent = 
+                hairWashDays > 0 ? Math.round((migrainesAfterHairWash / hairWashDays) * 100) + '%' : '0%';
+            document.getElementById('avgIntensity').textContent = 
+                intensityCount > 0 ? (totalIntensity / intensityCount).toFixed(1) : '0';
+            document.getElementById('leftEyePainPercent').textContent = 
+                totalMigraines > 0 ? Math.round((leftEyePainCount / totalMigraines) * 100) + '%' : '0%';
+            document.getElementById('avgSleepDuration').textContent = 
+                sleepDurationCount > 0 ? (totalSleepDuration / sleepDurationCount).toFixed(1) : '0';
+            
+            // Calculate new stats
+            calculateAdditionalStats();
+            
+            // Update trigger analysis
+            updateTriggerAnalysis(triggerCounts, triggerMigraneCounts);
+        }
+        
+        function calculateAdditionalStats() {
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            
+            // 1. Most Common Migraine Day
+            const dayCounts = {};
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            
+            Object.keys(migraineLogs).forEach(dateStr => {
+                const logDate = new Date(dateStr);
+                if (logDate.getMonth() === currentMonth && logDate.getFullYear() === currentYear) {
+                    const log = migraineLogs[dateStr];
+                    if (log.migraineSeverity > 0) {
+                        const dayName = dayNames[logDate.getDay()];
+                        dayCounts[dayName] = (dayCounts[dayName] || 0) + 1;
+                    }
+                }
+            });
+            
+            let mostCommonDay = '-';
+            let maxCount = 0;
+            Object.keys(dayCounts).forEach(day => {
+                if (dayCounts[day] > maxCount) {
+                    maxCount = dayCounts[day];
+                    mostCommonDay = day;
+                }
+            });
+            
+            // 2. Top Trigger This Month
+            const triggerCounts = {};
+            Object.keys(migraineLogs).forEach(dateStr => {
+                const logDate = new Date(dateStr);
+                if (logDate.getMonth() === currentMonth && logDate.getFullYear() === currentYear) {
+                    const log = migraineLogs[dateStr];
+                    
+                    // Count all triggers
+                    if (log.commonTriggers) {
+                        log.commonTriggers.forEach(trigger => {
+                            triggerCounts[trigger] = (triggerCounts[trigger] || 0) + 1;
+                        });
+                    }
+                    if (log.caffeineCups) triggerCounts['caffeine'] = (triggerCounts['caffeine'] || 0) + 1;
+                    if (log.alcoholDrinks) triggerCounts['alcohol'] = (triggerCounts['alcohol'] || 0) + 1;
+                    if (log.screenHours) triggerCounts['screen_time'] = (triggerCounts['screen_time'] || 0) + 1;
+                    if (log.skippedMealType) triggerCounts['skipped_meal'] = (triggerCounts['skipped_meal'] || 0) + 1;
+                    if (log.brightLightsSource) triggerCounts['bright_lights'] = (triggerCounts['bright_lights'] || 0) + 1;
+                    if (log.strongSmellSource) triggerCounts['strong_smell'] = (triggerCounts['strong_smell'] || 0) + 1;
+                }
+            });
+            
+            let topTrigger = '-';
+            let maxTriggerCount = 0;
+            Object.keys(triggerCounts).forEach(trigger => {
+                if (triggerCounts[trigger] > maxTriggerCount) {
+                    maxTriggerCount = triggerCounts[trigger];
+                    topTrigger = trigger.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                }
+            });
+            
+            // 3. Longest Migraine-Free Streak
+            let currentStreak = 0;
+            let longestStreak = 0;
+            const sortedDates = Object.keys(migraineLogs).sort();
+            
+            for (let i = 0; i < sortedDates.length; i++) {
+                const log = migraineLogs[sortedDates[i]];
+                if (log.migraineSeverity === 0) {
+                    currentStreak++;
+                    longestStreak = Math.max(longestStreak, currentStreak);
+                } else {
+                    currentStreak = 0;
+                }
+            }
+            
+            // 4. Caffeine Impact
+            let caffeineWithMigraine = 0;
+            let caffeineWithoutMigraine = 0;
+            let noCaffeineWithMigraine = 0;
+            let noCaffeineWithoutMigraine = 0;
+            
+            Object.keys(migraineLogs).forEach(dateStr => {
+                const log = migraineLogs[dateStr];
+                const hasMigraine = log.migraineSeverity > 0;
+                const hasCaffeine = log.caffeineCups && log.caffeineCups > 0;
+                
+                if (hasCaffeine && hasMigraine) caffeineWithMigraine++;
+                else if (hasCaffeine && !hasMigraine) caffeineWithoutMigraine++;
+                else if (!hasCaffeine && hasMigraine) noCaffeineWithMigraine++;
+                else if (!hasCaffeine && !hasMigraine) noCaffeineWithoutMigraine++;
+            });
+            
+            let caffeineImpact = '-';
+            if (caffeineWithMigraine + caffeineWithoutMigraine > 0 && noCaffeineWithMigraine + noCaffeineWithoutMigraine > 0) {
+                const caffeineMigraineRate = caffeineWithMigraine / (caffeineWithMigraine + caffeineWithoutMigraine);
+                const noCaffeineMigraineRate = noCaffeineWithMigraine / (noCaffeineWithMigraine + noCaffeineWithoutMigraine);
+                
+                if (caffeineMigraineRate > noCaffeineMigraineRate) {
+                    caffeineImpact = 'Worse';
+                } else if (caffeineMigraineRate < noCaffeineMigraineRate) {
+                    caffeineImpact = 'Better';
+                } else {
+                    caffeineImpact = 'Neutral';
+                }
+            }
+            
+            // Update the new stat elements
+            document.getElementById('mostCommonDay').textContent = mostCommonDay;
+            document.getElementById('topTrigger').textContent = topTrigger;
+            document.getElementById('longestStreak').textContent = longestStreak;
+            document.getElementById('caffeineImpact').textContent = caffeineImpact;
+        }
+        
+        function updateTriggerAnalysis(triggerCounts, triggerMigraneCounts) {
+            const triggerStatsContainer = document.getElementById('triggerStats');
+            triggerStatsContainer.innerHTML = '';
+            
+            // Calculate correlation percentages
+            const triggerCorrelations = [];
+            Object.keys(triggerCounts).forEach(trigger => {
+                const totalCount = triggerCounts[trigger];
+                const migraneCount = triggerMigraneCounts[trigger] || 0;
+                const correlation = totalCount > 0 ? (migraneCount / totalCount) * 100 : 0;
+                
+                if (totalCount >= 2) { // Only show triggers with at least 2 occurrences
+                    triggerCorrelations.push({
+                        name: trigger,
+                        correlation: correlation,
+                        count: totalCount
+                    });
+                }
+            });
+            
+            // Sort by correlation percentage
+            triggerCorrelations.sort((a, b) => b.correlation - a.correlation);
+            
+            // Display top triggers
+            triggerCorrelations.slice(0, 6).forEach(trigger => {
+                const triggerItem = document.createElement('div');
+                triggerItem.className = 'trigger-stat-item';
+                triggerItem.innerHTML = `
+                    <div class="trigger-stat-name">${trigger.name}</div>
+                    <div class="trigger-stat-value">${Math.round(trigger.correlation)}%</div>
+                `;
+                triggerStatsContainer.appendChild(triggerItem);
+            });
+            
+            if (triggerCorrelations.length === 0) {
+                triggerStatsContainer.innerHTML = '<p style="color: #86868b; text-align: center;">No trigger data available yet. Keep logging to see patterns!</p>';
+            }
+        }
+
+        function toggleTriggerDetail(trigger) {
+            // Keep detail fields always visible
+            const detail = document.getElementById(trigger + 'Detail');
+            if (!detail) return;
+            const btn = document.querySelector(`[data-trigger='${trigger}']`);
+            if (!btn) return;
+            
+            // Clear values when trigger is deselected
+            if (!btn.classList.contains('active')) {
+                const input = detail.querySelector('input,select');
+                if (input) input.value = '';
+                // Clear button selections
+                const mealBtns = detail.querySelectorAll('.meal-btn');
+                const lightSourceBtns = detail.querySelectorAll('.light-source-btn');
+                const caffeineBtns = detail.querySelectorAll('.caffeine-btn');
+                const screenBtns = detail.querySelectorAll('.screen-btn');
+                const alcoholBtns = detail.querySelectorAll('.alcohol-btn');
+                mealBtns.forEach(btn => btn.classList.remove('active'));
+                lightSourceBtns.forEach(btn => btn.classList.remove('active'));
+                caffeineBtns.forEach(btn => btn.classList.remove('active'));
+                screenBtns.forEach(btn => btn.classList.remove('active'));
+                alcoholBtns.forEach(btn => btn.classList.remove('active'));
+            }
+        }
+        
+        function selectMeal(meal) {
+            // Clear all meal buttons
+            const mealBtns = document.querySelectorAll('.meal-btn');
+            mealBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Activate selected button
+            const selectedBtn = document.querySelector(`[data-meal='${meal}']`);
+            if (selectedBtn) {
+                selectedBtn.classList.add('active');
+            }
+            
+            // Set hidden input value
+            document.getElementById('skippedMealType').value = meal;
+        }
+        
+        function selectLightSource(source) {
+            // Clear all light source buttons
+            const lightSourceBtns = document.querySelectorAll('.light-source-btn');
+            lightSourceBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Activate selected button
+            const selectedBtn = document.querySelector(`[data-source='${source}']`);
+            if (selectedBtn) {
+                selectedBtn.classList.add('active');
+            }
+            
+            // Set hidden input value
+            document.getElementById('brightLightsSource').value = source;
+        }
+        
+        function selectCaffeine(cups) {
+            // Clear all caffeine buttons
+            const caffeineBtns = document.querySelectorAll('.caffeine-btn');
+            caffeineBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Activate selected button
+            const selectedBtn = document.querySelector(`[data-cups='${cups}']`);
+            if (selectedBtn) {
+                selectedBtn.classList.add('active');
+            }
+            
+            // Set hidden input value
+            document.getElementById('caffeineCups').value = cups;
+        }
+        
+        function selectScreenTime(hours) {
+            // Clear all screen time buttons
+            const screenBtns = document.querySelectorAll('.screen-btn');
+            screenBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Activate selected button
+            const selectedBtn = document.querySelector(`[data-hours='${hours}']`);
+            if (selectedBtn) {
+                selectedBtn.classList.add('active');
+            }
+            
+            // Set hidden input value
+            document.getElementById('screenHours').value = hours;
+        }
+        
+        function selectAlcohol(drinks) {
+            // Clear all alcohol buttons
+            const alcoholBtns = document.querySelectorAll('.alcohol-btn');
+            alcoholBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Activate selected button
+            const selectedBtn = document.querySelector(`[data-drinks='${drinks}']`);
+            if (selectedBtn) {
+                selectedBtn.classList.add('active');
+            }
+            
+            // Set hidden input value
+            document.getElementById('alcoholDrinks').value = drinks;
+        }
+        
+        function downloadData() {
+            const data = {
+                migraineLogs: migraineLogs,
+                exportDate: new Date().toISOString(),
+                totalEntries: Object.keys(migraineLogs).length,
+                dateRange: {
+                    start: Object.keys(migraineLogs).sort()[0] || 'No data',
+                    end: Object.keys(migraineLogs).sort().pop() || 'No data'
+                }
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `migraine-data-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            alert('✅ Data downloaded successfully!');
+        }
+        
+        function downloadDataCSV() {
+            if (Object.keys(migraineLogs).length === 0) {
+                alert('No data to export');
+                return;
+            }
+            
+            // Create CSV header
+            const headers = [
+                'Date',
+                'Migraine Severity',
+                'Hair Wash',
+                'Wash Time',
+                'Products Used',
+                'Environmental Exposure',
+                'Sleep Quality',
+                'Sleep Duration',
+                'Stress Level',
+                'Caffeine Cups',
+                'Alcohol Drinks',
+                'Screen Hours',
+                'Skipped Meal',
+                'Bright Lights Source',
+                'Strong Smell Source',
+                'Symptoms',
+                'Common Triggers',
+                'Notes'
+            ];
+            
+            // Create CSV content
+            let csvContent = headers.join(',') + '\n';
+            
+            const sortedDates = Object.keys(migraineLogs).sort();
+            sortedDates.forEach(date => {
+                const log = migraineLogs[date];
+                const row = [
+                    date,
+                    log.migraineSeverity || 0,
+                    log.hairWash || 'no',
+                    log.washTime || '',
+                    (log.productsUsed || []).join(';'),
+                    (log.environmentalExposure || []).join(';'),
+                    log.sleepQuality || '',
+                    log.sleepDuration || '',
+                    log.stressLevel || '',
+                    log.caffeineCups || '',
+                    log.alcoholDrinks || '',
+                    log.screenHours || '',
+                    log.skippedMealType || '',
+                    log.brightLightsSource || '',
+                    log.strongSmellSource || '',
+                    (log.symptoms || []).join(';'),
+                    (log.commonTriggers || []).join(';'),
+                    `"${(log.notes || '').replace(/"/g, '""')}"`
+                ];
+                csvContent += row.join(',') + '\n';
+            });
+            
+            const dataBlob = new Blob([csvContent], {type: 'text/csv'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `migraine-data-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            alert('✅ CSV data downloaded successfully!');
+        }
+    </script>
+</body>
+</html> 
